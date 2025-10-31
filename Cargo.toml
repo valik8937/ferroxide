@@ -1,0 +1,11 @@
+[package]
+name = "Ferroxide"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+libc = "0.2.177"
+libloading = "0.8.9"
+
+[lib]
+crate-type = ["cdylib"]
