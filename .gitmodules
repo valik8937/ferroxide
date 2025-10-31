@@ -1,0 +1,3 @@
+[submodule "reference/libhybris"]
+	path = reference/libhybris
+	url = https://github.com/libhybris/libhybris
