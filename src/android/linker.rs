@@ -48,11 +48,14 @@ pub fn get_android_symbol(lib_name: &str, symbol_name: &str) -> Option<*mut c_vo
     if let Some(lib) = libs.get(lib_name) {
         let symbol_name_bytes = symbol_name.as_bytes();
         unsafe {
-            match lib.get(symbol_name_bytes) {
+            // We need to provide a type for the symbol, but since we are just interested
+            // in the raw pointer, we can use a generic function pointer type. The caller
+            // is responsible for transmuting it to the correct signature.
+            match lib.get::<unsafe extern "C" fn()>(symbol_name_bytes) {
                 Ok(symbol) => {
                     println!("Successfully found symbol '{}' in '{}'", symbol_name, lib_name);
-                    let symbol: Symbol<unsafe extern "C" fn() -> ()> = symbol;
-                    Some(symbol.into_raw().into_raw() as *mut c_void)
+                    let raw_symbol = symbol.into_raw();
+                    Some(raw_symbol.into_raw() as *mut c_void)
                 }
                 Err(e) => {
                     println!("Symbol '{}' not found in '{}': {}", symbol_name, lib_name, e);

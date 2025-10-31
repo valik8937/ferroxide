@@ -1,3 +1,4 @@
+use crate::egl::wrappers::ferroxide_eglGetDisplay;
 use lazy_static::lazy_static;
 use libloading::{Library, Symbol};
 use libc::{c_char, c_void};
@@ -23,7 +24,16 @@ pub unsafe extern "C" fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *m
     }
 
     let symbol_str = unsafe { CStr::from_ptr(symbol).to_string_lossy() };
-    println!("dlsym hook: {}", symbol_str);
+
+    match symbol_str.as_ref() {
+        "eglGetDisplay" => {
+            println!("[ferroxide dlsym] Intercepting 'eglGetDisplay', returning our wrapper.");
+            return ferroxide_eglGetDisplay as *mut c_void;
+        }
+        _ => {
+            println!("dlsym hook: {}", symbol_str);
+        }
+    }
 
     if let Some(ref dlsym_func) = *real_dlsym {
         unsafe { dlsym_func(handle, symbol) }
