@@ -1,5 +1,5 @@
 use lazy_static::lazy_static;
-use libloading::Library;
+use libloading::{Library, Symbol};
 use libc::c_void;
 use std::collections::HashMap;
 use std::sync::Mutex;
