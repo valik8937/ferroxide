@@ -7,6 +7,17 @@ mod macros;
 pub mod hooks;
 pub mod android;
 pub mod egl;
+pub mod registry;
+
+use libc::{c_char, c_void};
+use std::ffi::CStr;
+use std::sync::Mutex;
+
+lazy_static! {
+    static ref REAL_EGL_GET_PROC_ADDRESS:
+        Mutex<Option<unsafe extern "C" fn(*const c_char) -> *mut c_void>>
+        = Mutex::new(None);
+}
 
 use std::collections::HashMap;
 use std::ffi::{CStr};
